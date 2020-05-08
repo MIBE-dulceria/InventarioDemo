@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { makeStyles } from '@material-ui/core/styles';
-
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
-import '../util/style.css';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -21,12 +15,6 @@ import {Typography} from '@material-ui/core';
 
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-
-//import {connect} from 'react-redux';
-import { addProduct } from '../components/inventory';
-
-import PropTypes from 'prop-types';
-import withStyles from '@material-ui/core/styles/withStyles';
 
 import grey from '@material-ui/core/colors/grey';
 import blue from '@material-ui/core/colors/blue';
@@ -51,8 +39,6 @@ export class Inicio extends Component {
             EDITname: '',
             EDITprice: '',
             EDITammount: '',
-            arrayPrueba: [],
-            numeros:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             filterTypeNUMBER: 0,
             filterTypeID: 0,
             filterTypePRODUCT: 0,
@@ -69,8 +55,6 @@ export class Inicio extends Component {
             .then((res) => {
                 console.log("imprime res recargados");
                 console.log(res);
-                console.log("imprime res.data recargados");
-                console.log(res.data);
                 let productos = [];
                 for (var i = 0 ; i < res.data.length ; i++) {
                     productos.push({
@@ -84,8 +68,6 @@ export class Inicio extends Component {
                 this.setState({
                     products: productos
                 })
-                console.log('arrayPrueba');
-                console.log(this.state.arrayPrueba);
             })
             .catch(err => console.log(err));
     }
@@ -182,7 +164,7 @@ export class Inicio extends Component {
         });
     }
 
-    ///     MOSTRAR TABLA 1
+    ///     MOSTRAR TABLA DE CREACION
     showingTable1 = () => {
         if (this.state.hiddenTable1) {
             this.setState({
@@ -205,12 +187,11 @@ export class Inicio extends Component {
                 EDITammount: ''
             });
         }
-        //this.state.hiddenTable1 = false;
         console.log("state");
         console.log(this.state);
     };
 
-    ///     MOSTRAR TABLA 2
+    ///     MOSTRAR TABLA DE EDICION
     showingTable2(product) {
         if (this.state.hiddenTable2) {
             this.setState({
