@@ -52,7 +52,12 @@ export class Inicio extends Component {
             EDITprice: '',
             EDITammount: '',
             arrayPrueba: [],
-            numeros:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            numeros:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            filterTypeNUMBER: 0,
+            filterTypeID: 0,
+            filterTypePRODUCT: 0,
+            filterTypePRICE: 0,
+            filterTypeAMMOUNT: 0
         }
     } 
 
@@ -77,8 +82,7 @@ export class Inicio extends Component {
                     })
                 }
                 this.setState({
-                    products: productos,
-                    arrayPrueba: res.data
+                    products: productos
                 })
                 console.log('arrayPrueba');
                 console.log(this.state.arrayPrueba);
@@ -248,6 +252,62 @@ export class Inicio extends Component {
         console.log(this.state);
     };
     
+    filterby(field) {
+        var productFilter = [];
+        switch(field) {
+            case "NUMBER":
+                if (this.state.filterTypeNUMBER == 0) {
+                    productFilter = this.state.products.sort(function(a, b){return a.productNo-b.productNo});
+                    this.state.filterTypeNUMBER = 1;
+                } else {
+                    productFilter = this.state.products.sort(function(a, b){return b.productNo-a.productNo});
+                    this.state.filterTypeNUMBER = 0;
+                }
+            break;
+            case "ID":
+                if (this.state.filterTypeID == 0) {
+                    productFilter = this.state.products.sort(function(a, b){ if (a.productId > b.productId) {return -1;}if (b.productId > a.productId) {return 1;}return 0;});
+                    this.state.filterTypeID = 1;
+                } else {
+                    productFilter = this.state.products.sort(function(a, b){ if (a.productId < b.productId) {return -1;}if (b.productId < a.productId) {return 1;}return 0;});
+                    this.state.filterTypeID = 0;
+                }
+            break;
+            case "PRODUCT":
+                if (this.state.filterTypePRODUCT == 0) {
+                    productFilter = this.state.products.sort(function(a, b){ if (a.name > b.name) {return -1;}if (b.name > a.name) {return 1;}return 0;});
+                    this.state.filterTypePRODUCT = 1;
+                } else {
+                    productFilter = this.state.products.sort(function(a, b){ if (a.name < b.name) {return -1;}if (b.name < a.name) {return 1;}return 0;});
+                    this.state.filterTypePRODUCT = 0;
+                }
+            break;
+            case "PRICE":
+                if (this.state.filterTypePRICE == 0) {
+                    productFilter = this.state.products.sort(function(a, b){return a.price-b.price});
+                    this.state.filterTypePRICE = 1;
+                } else {
+                    productFilter = this.state.products.sort(function(a, b){return b.price-a.price});
+                    this.state.filterTypePRICE = 0;
+                }
+            break;
+            case "AMMOUNT":
+                if (this.state.filterTypeNUMBER == 0) {
+                    productFilter = this.state.products.sort(function(a, b){return a.ammount-b.ammount});
+                    this.state.filterTypeNUMBER = 1;
+                } else {
+                    productFilter = this.state.products.sort(function(a, b){return b.ammount-a.ammount});
+                    this.state.filterTypeNUMBER = 0;
+                }
+            break;
+        }
+
+        this.setState({
+            products: productFilter
+        })
+    }
+
+
     render() {
         const styles = {
             buttonRed: {
@@ -257,7 +317,7 @@ export class Inicio extends Component {
                 backgroundColor: green['400']
             },
             buttonYellow: {
-                backgroundColor: yellow['400']
+                backgroundColor: yellow['200']
             },
             tableGreyMedium: {
                 backgroundColor: grey['300']
@@ -283,53 +343,28 @@ export class Inicio extends Component {
             tableOrange: {
                 backgroundColor: orange['300']
             },
+            tableBlueMedium: {
+                backgroundColor: blue['400']
+            },
+            tableBlueDark: {
+                backgroundColor: blue['500']
+            }
         }
-
-
-        const tabla = this.state.arrayPrueba.map((item) => (
-                                        
-                                        <TableRow hover key={item.productId}>
-                                            <TableCell align='center'>{this.state.arrayPrueba.indexOf(item)+1}</TableCell>
-                                            <TableCell align='center'>{item.productId}</TableCell>
-                                            <TableCell align='center'>{item.name}</TableCell>
-                                            <TableCell align='center'>{item.price}</TableCell>
-                                            <TableCell align='center'>{item.ammount}</TableCell>
-                                            <TableCell align='center'>
-                                                <Button type="submit"
-                                                    style={styles.buttonYellow}
-                                                    onClick={this.showingTable2.bind(this,item)}
-                                                >
-                                                    <EditIcon/>
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ));
-        
 
         console.log("imprime estado recargado");
         console.log(this.state);
 
         return (
             <div>
-
-            { this.state.arrayPrueba.map(function(item){
-                return(
-                    <div>
-                    {item.name}
-                    </div>
-                )
-            })
-
-            }
                 <Grid container>
-                    <Grid item xs={12} style={styles.tableGreyLight}>
+                    <Grid item xs={12} style={styles.tableBlueDark}>
                         <br/>
                         <br/>
                     </Grid>
-                    <Grid item xs={12} style={styles.tableGreyLight}>
+                    <Grid item xs={12} style={styles.tableBlueDark}>
                         <Typography variant="h2">INVENTARIO</Typography>
                     </Grid>
-                    <Grid item xs={12} style={styles.tableGreyLight}>
+                    <Grid item xs={12} style={styles.tableBlueDark}>
                         <br/>
                         <br/>
                     </Grid>
@@ -346,7 +381,9 @@ export class Inicio extends Component {
                             variant="contained"
                             onClick={this.showingTable1}
                         >
-                            {this.state.hiddenTable1 ? "Agregar Producto":"Cancelar"}
+                            <Typography variant="h6">
+                                {this.state.hiddenTable1 ? "Agregar Producto":"Cancelar"}
+                            </Typography>
                         </Button>
                     </Grid>
                     <Grid item xs={2}/>
@@ -356,15 +393,15 @@ export class Inicio extends Component {
                         <Paper hidden={this.state.hiddenTable1}>
                             <form noValidate onSubmit={this.handleProductCreation}>
                                 <Table>
-                                    <TableHead style={styles.tableGreyMedium}>
+                                    <TableHead style={styles.tableBlueMedium}>
                                         <TableCell align="center" colSpan={2}>
-                                            <Typography variant="h6">Agregar Nuevo Producto</Typography>
+                                            <Typography variant="h5">Agregar Nuevo Producto</Typography>
                                         </TableCell>
                                     </TableHead>
                                     <TableBody style={styles.tableGreyLight}>
                                         <TableRow>
                                             <TableCell colSpan={2}>
-                                                <TextField name="name" type="text" label="Nombre" 
+                                                <TextField name="name" type="text" label="Nombre de Producto" 
                                                     value={this.state.name}
                                                     fullWidth required
                                                     onChange={this.handleChange}
@@ -389,7 +426,11 @@ export class Inicio extends Component {
                                         </TableRow>
                                         <TableRow>
                                             <TableCell align="center" colSpan={2}>
-                                                <Button variant="contained" type="submit" style={styles.buttonGreen}>Agregar</Button>
+                                                <Button variant="contained" type="submit" style={styles.buttonGreen}>
+                                                    <Typography variant="h6">
+                                                        AGREGAR
+                                                    </Typography>
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -404,7 +445,7 @@ export class Inicio extends Component {
                         <Paper hidden={this.state.hiddenTable2}>
                             <form noValidate onSubmit={this.handleProductEdition}>
                                 <Table>
-                                    <TableHead style={styles.tableGreyMedium}>
+                                    <TableHead style={styles.tableBlueMedium}>
                                         <TableCell align="center" colSpan={2}>
                                             <Typography variant="h6">{"Producto " + this.state.EDITproductId}</Typography>
                                         </TableCell>
@@ -412,7 +453,7 @@ export class Inicio extends Component {
                                     <TableBody style={styles.tableGreyLight}>
                                         <TableRow>
                                             <TableCell colSpan={2}>
-                                                <TextField name="EDITname" type="text" label="Nombre" 
+                                                <TextField name="EDITname" type="text" label="Nombre de Producto" 
                                                     value={this.state.EDITname}
                                                     fullWidth required
                                                     onChange={this.handleChange}
@@ -437,7 +478,11 @@ export class Inicio extends Component {
                                         </TableRow>
                                         <TableRow>
                                             <TableCell align="center" colSpan={2}>
-                                                <Button variant="contained" type="submit" style={styles.buttonGreen}>Guardar</Button>
+                                                <Button variant="contained" type="submit" style={styles.buttonGreen}>
+                                                    <Typography variant="h6">
+                                                        GUARDAR
+                                                    </Typography>
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -456,39 +501,67 @@ export class Inicio extends Component {
                     <Grid item xs={2}/>
                     <Grid item xs={8}>
                         <Paper>
-                            <Table aria-label="simple table" stickyHeader>
+                            <Table stickyHeader>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align='center'>
-                                            <Typography variant="h6">Numero</Typography>
+                                        <TableCell align='center' style={styles.tableBlue}>
+                                            <Button onClick={this.filterby.bind(this,"NUMBER")}>
+                                                <Typography variant="h5">Numero</Typography>
+                                            </Button>
                                         </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography variant="h6">Id de Producto</Typography>
+                                        <TableCell align='center' style={styles.tableBlue}>
+                                            <Button onClick={this.filterby.bind(this,"ID")}>
+                                                <Typography variant="h5">Id de Producto</Typography>
+                                            </Button>
                                         </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography variant="h6">Nombre</Typography>
+                                        <TableCell align='center' style={styles.tableBlue}>
+                                            <Button onClick={this.filterby.bind(this,"PRODUCT")}>
+                                                <Typography variant="h5">Producto</Typography>
+                                            </Button>
                                         </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography variant="h6">Precio</Typography>
+                                        <TableCell align='center' style={styles.tableBlue}>
+                                            <Button onClick={this.filterby.bind(this,"PRICE")}>
+                                                <Typography variant="h5">Precio</Typography>
+                                            </Button>
                                         </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography variant="h6">Cantidad</Typography>
+                                        <TableCell align='center' style={styles.tableBlue}>
+                                            <Button onClick={this.filterby.bind(this,"AMMOUNT")}>
+                                                <Typography variant="h5">Cantidad</Typography>
+                                            </Button>
                                         </TableCell>
-                                        <TableCell align='center'>
-                                            <Typography variant="h6">Editar</Typography>
+                                        <TableCell align='center' style={styles.tableBlue}>
+                                            <Typography variant="h5">EDITAR</Typography>
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {tabla}
-                                   {/*  {this.state.arrayPrueba.map((item) => (
-                                        
-                                        <TableRow hover key={item.productId}>
-                                            <TableCell align='center'>{this.state.arrayPrueba.indexOf(item)+1}</TableCell>
-                                            <TableCell align='center'>{item.productId}</TableCell>
-                                            <TableCell align='center'>{item.name}</TableCell>
-                                            <TableCell align='center'>{item.price}</TableCell>
-                                            <TableCell align='center'>{item.ammount}</TableCell>
+                                    {this.state.products && this.state.products.length !== 0 ? this.state.products.map((item, key) => (
+                                        <TableRow hover key={key}>
+                                            <TableCell align='center'>
+                                                <Typography variant="h6">
+                                                    {item.productNo}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align='center'>
+                                                <Typography variant="h6">
+                                                    {item.productId}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align='center'>
+                                                <Typography variant="h6">
+                                                    {item.name}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align='center'>
+                                                <Typography variant="h6">
+                                                    ${item.price}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align='center'style={item.ammount==0 ? styles.tableRed:styles.tableGreyLight}>
+                                                <Typography variant="h6">
+                                                    {item.ammount}
+                                                </Typography>
+                                            </TableCell>
                                             <TableCell align='center'>
                                                 <Button type="submit"
                                                     style={styles.buttonYellow}
@@ -498,7 +571,12 @@ export class Inicio extends Component {
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
-                                    ))} */}
+                                    )):
+                                    <TableRow align="center">
+                                        <TableCell colSpan={1}/>
+                                        <TableCell colSpan={3}> <Typography variant="h3" align="center">No hay productos</Typography></TableCell>
+                                        <TableCell colSpan={1}/>
+                                    </TableRow>}
                                 </TableBody>
                             </Table>
                         </Paper>
