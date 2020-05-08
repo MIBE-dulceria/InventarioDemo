@@ -563,11 +563,10 @@ export class Inicio extends Component {
                         </Paper>
                     </Grid>
                     <Grid item xs={2}/>
-                    
-                    </Grid>
-                    <br/>
-                    <br/>
-                    <br/>               
+                </Grid>
+                <br/>
+                <br/>
+                <br/>               
             </div>
         )
     }
